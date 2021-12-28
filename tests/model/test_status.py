@@ -1,5 +1,7 @@
+import pytest
 from dell_printer_parser.model.status import Status
 
+@pytest.mark.asyncio
 async def test_status():
     status = Status()
     status.printerType = "Color Laser"

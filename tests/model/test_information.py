@@ -1,5 +1,7 @@
+import pytest
 from dell_printer_parser.model.information import Information
 
+@pytest.mark.asyncio
 async def test_informaiton():
     information = Information()
     information.dellServiceTagNumber = 'xd4e0vb3'

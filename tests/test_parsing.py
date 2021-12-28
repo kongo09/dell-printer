@@ -1,6 +1,6 @@
+import pytest
 from os import stat
 import aiohttp
-# from aiohttp import payload
 from aioresponses import aioresponses
 
 from dell_printer_parser.const import STATUS_URL, INFORMATION_URL, PRINT_VOLUME_URL
@@ -12,6 +12,7 @@ from dell_printer_parser.model.status import Status
 FAKE_TEST_IP = "192.168.0.0"
 
 
+@pytest.mark.asyncio
 async def test_parsing_with_fake_data(response_information, response_printer_volume, response_status):
     """Test parsing with fake data loaded from fixture response files."""
     async with aiohttp.ClientSession() as session:
