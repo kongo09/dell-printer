@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Information:
+    modelName: str = None
     dellServiceTagNumber: str = None
     assetTagNumber: str = None
     printerSerialNumber: str = None

@@ -8,6 +8,7 @@ async def main():
         dpp = DellPrinterParser(session, ip)
         await dpp.load_data()
         print(f"printer tag={dpp.information.dellServiceTagNumber}")
+        print(f"model={dpp.information.modelName}")
 
 
 if (__name__ == '__main__'):

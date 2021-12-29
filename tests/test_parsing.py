@@ -46,6 +46,7 @@ def _validate_status(status: Status) -> None:
 
 def _validate_information(information: Information) -> None:
     """Validate information against fixture"""
+    assert information.modelName == "Dell C1765nfw Color MFP"
     assert information.assetTagNumber == ""
     assert information.dellServiceTagNumber == "GQXR3Y1"
     assert information.firmwareVersion == "01.22.00"

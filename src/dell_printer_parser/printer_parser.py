@@ -61,6 +61,8 @@ class DellPrinterParser:
     def _extract_information(self, data) -> None:
         soup = bs(data, 'html.parser')
 
+        self.information.modelName = self._strip(soup.title.string)
+
         data_items = soup.select_one("body > table > tr > td > table:nth-of-type(4) > tr > td > table")  
         self.information.dellServiceTagNumber = self._strip(data_items.select_one("tr:nth-of-type(1) > td:nth-of-type(2) > font").string)
         self.information.assetTagNumber = self._strip(data_items.select_one("tr:nth-of-type(2) > td:nth-of-type(2) > font").string)
