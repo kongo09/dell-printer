@@ -9,6 +9,7 @@ async def main():
         await dpp.load_data()
         print(f"printer tag={dpp.information.dellServiceTagNumber}")
         print(f"model={dpp.information.modelName}")
+        print(f"rear cover={dpp.status.rearCoverStatus}")
 
 
 if (__name__ == '__main__'):

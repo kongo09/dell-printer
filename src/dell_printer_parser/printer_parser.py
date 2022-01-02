@@ -7,6 +7,7 @@ from dell_printer_parser.const import (
     INFORMATION_URL,
     PRINT_VOLUME_URL,
     STATUS_URL,
+    LANGUAGE_SET_URL,
 )
 
 from dell_printer_parser.model.information import Information
@@ -23,10 +24,21 @@ class DellPrinterParser:
         self.status = Status()
     
     async def load_data(self) -> None:
-        """load all data and merge results."""
+        """Load all data and merge results."""
+        await self._set_language()
         await self._load_information()
         await self._load_print_volume()
         await self._load_status()
+
+    async def _set_language(self) -> None:
+        """Set the printer admin interface language to default."""
+        post_url = "http://" + self.ip + "/" + LANGUAGE_SET_URL
+        payload = {
+            'url': LANGUAGE_SET_URL
+        }
+        response = await self.session.request(method="POST", url=post_url, data=payload)
+        body = await response.text()
+        response.raise_for_status()
 
     async def _load_from_printer(self, url: str) -> str:
         # response = await self.session.get(self.base_url + url)

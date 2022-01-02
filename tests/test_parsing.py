@@ -3,7 +3,7 @@ from os import stat
 import aiohttp
 from aioresponses import aioresponses
 
-from dell_printer_parser.const import STATUS_URL, INFORMATION_URL, PRINT_VOLUME_URL
+from dell_printer_parser.const import LANGUAGE_SET_URL, STATUS_URL, INFORMATION_URL, PRINT_VOLUME_URL
 from dell_printer_parser.printer_parser import DellPrinterParser
 from dell_printer_parser.model.information import Information
 from dell_printer_parser.model.print_volume import PrintVolume
@@ -17,6 +17,7 @@ async def test_parsing_with_fake_data(response_information, response_printer_vol
     """Test parsing with fake data loaded from fixture response files."""
     async with aiohttp.ClientSession() as session:
         with aioresponses() as mocked:
+            mocked.post("http://" + FAKE_TEST_IP + "/" + LANGUAGE_SET_URL, status=200)
             mocked.get("http://" + FAKE_TEST_IP + STATUS_URL, status=200, payload=response_status)
             mocked.get("http://" + FAKE_TEST_IP + INFORMATION_URL, status=200, payload=response_information)
             mocked.get("http://" + FAKE_TEST_IP + PRINT_VOLUME_URL, status=200, payload=response_printer_volume)
