@@ -7,12 +7,14 @@ from dell_printer_parser.const import (
     INFORMATION_URL,
     PRINT_VOLUME_URL,
     STATUS_URL,
+    EVENTS_URL,
     LANGUAGE_SET_URL,
 )
 
 from dell_printer_parser.model.information import Information
 from dell_printer_parser.model.print_volume import PrintVolume
 from dell_printer_parser.model.status import Status
+from dell_printer_parser.model.events import Events
 
 
 class DellPrinterParser:
@@ -22,6 +24,7 @@ class DellPrinterParser:
         self.information = Information()
         self.printVolume = PrintVolume()
         self.status = Status()
+        self.events = Events()
     
     async def load_data(self) -> None:
         """Load all data and merge results."""
@@ -29,6 +32,7 @@ class DellPrinterParser:
         await self._load_information()
         await self._load_print_volume()
         await self._load_status()
+        await self._load_events()
 
     async def _set_language(self) -> None:
         """Set the printer admin interface language to default."""
@@ -37,7 +41,7 @@ class DellPrinterParser:
             'url': LANGUAGE_SET_URL
         }
         response = await self.session.request(method="POST", url=post_url, data=payload)
-        body = await response.text()
+        await response.text()
         response.raise_for_status()
 
     async def _load_from_printer(self, url: str) -> str:
@@ -59,6 +63,10 @@ class DellPrinterParser:
     async def _load_status(self) -> None:
         data = await self._load_from_printer(STATUS_URL)
         self._extract_status(data)
+
+    async def _load_events(self) -> None:
+        data = await self._load_from_printer(EVENTS_URL)
+        self._extract_events(data)
 
     def _strip(self, text) -> str:
         """For whatever reason, BeautifulSoup doesn't do a beautful strip"""
@@ -133,3 +141,12 @@ class DellPrinterParser:
         data_items = soup.select_one("body > table > tr > td > table:nth-of-type(8) > tr > td > table")
         self.status.printerType = self._strip(data_items.select_one("tr:nth-of-type(1) > td:nth-of-type(2)").string)
         self.status.printingSpeed = self._strip(data_items.select_one("tr:nth-of-type(2) > td:nth-of-type(2)").get_text(" ", strip=True))
+
+
+    def _extract_events(self, data) -> None:
+        soup = bs(data, 'html.parser')
+
+        data_items = soup.select("td > font > b")
+
+        self.events.eventLocation = self._strip(data_items[1].string)
+        self.events.eventDetails = self._strip(data_items[2].string)

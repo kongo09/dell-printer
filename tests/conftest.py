@@ -14,3 +14,8 @@ def response_status():
 def response_printer_volume():
     with open("tests/fixtures/response_printer_volume.html", "r") as mock_response:
         return mock_response.read()
+
+@pytest.fixture()
+def response_events():
+    with open("tests/fixtures/response_events.html", "r") as mock_response:
+        return mock_response.read()

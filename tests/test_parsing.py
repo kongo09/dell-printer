@@ -3,17 +3,18 @@ from os import stat
 import aiohttp
 from aioresponses import aioresponses
 
-from dell_printer_parser.const import LANGUAGE_SET_URL, STATUS_URL, INFORMATION_URL, PRINT_VOLUME_URL
+from dell_printer_parser.const import LANGUAGE_SET_URL, STATUS_URL, INFORMATION_URL, PRINT_VOLUME_URL, EVENTS_URL
 from dell_printer_parser.printer_parser import DellPrinterParser
 from dell_printer_parser.model.information import Information
 from dell_printer_parser.model.print_volume import PrintVolume
 from dell_printer_parser.model.status import Status
+from dell_printer_parser.model.events import Events
 
 FAKE_TEST_IP = "192.168.0.0"
 
 
 @pytest.mark.asyncio
-async def test_parsing_with_fake_data(response_information, response_printer_volume, response_status):
+async def test_parsing_with_fake_data(response_information, response_printer_volume, response_status, response_events):
     """Test parsing with fake data loaded from fixture response files."""
     async with aiohttp.ClientSession() as session:
         with aioresponses() as mocked:
@@ -21,6 +22,7 @@ async def test_parsing_with_fake_data(response_information, response_printer_vol
             mocked.get("http://" + FAKE_TEST_IP + STATUS_URL, status=200, payload=response_status)
             mocked.get("http://" + FAKE_TEST_IP + INFORMATION_URL, status=200, payload=response_information)
             mocked.get("http://" + FAKE_TEST_IP + PRINT_VOLUME_URL, status=200, payload=response_printer_volume)
+            mocked.get("http://" + FAKE_TEST_IP + EVENTS_URL, status=200, payload=response_events)
 
             printer_parser = DellPrinterParser(session, FAKE_TEST_IP)
             await printer_parser.load_data()
@@ -28,6 +30,7 @@ async def test_parsing_with_fake_data(response_information, response_printer_vol
             _validate_status(printer_parser.status)
             _validate_information(printer_parser.information)
             _validate_print_volume(printer_parser.printVolume)
+            _validate_events(printer_parser.events)
 
 def _validate_status(status: Status) -> None:
     """Validate status against fixture"""
@@ -71,3 +74,8 @@ def _validate_print_volume(printer_volume: PrintVolume) -> None:
     assert printer_volume.paperUsedMonarch == 0
     assert printer_volume.paperUsedOthers == 17
     assert printer_volume.printerPageCount == 8862
+
+def _validate_events(events: Events) -> None:
+    """Validate events against fixture."""
+    assert events.eventLocation == "MPF"
+    assert events.eventDetails == "024-969:Paper is not loaded in the selected tray. Load the specified paper."

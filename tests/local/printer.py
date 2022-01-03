@@ -10,6 +10,7 @@ async def main():
         print(f"printer tag={dpp.information.dellServiceTagNumber}")
         print(f"model={dpp.information.modelName}")
         print(f"rear cover={dpp.status.rearCoverStatus}")
+        print(f"event status={dpp.events.eventDetails}")
 
 
 if (__name__ == '__main__'):
