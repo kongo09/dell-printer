@@ -1,5 +1,4 @@
 import pytest
-from os import stat
 import aiohttp
 from aioresponses import aioresponses
 
@@ -19,10 +18,10 @@ async def test_parsing_with_fake_data(response_information, response_printer_vol
     async with aiohttp.ClientSession() as session:
         with aioresponses() as mocked:
             mocked.post("http://" + FAKE_TEST_IP + "/" + LANGUAGE_SET_URL, status=200)
-            mocked.get("http://" + FAKE_TEST_IP + STATUS_URL, status=200, payload=response_status)
-            mocked.get("http://" + FAKE_TEST_IP + INFORMATION_URL, status=200, payload=response_information)
-            mocked.get("http://" + FAKE_TEST_IP + PRINT_VOLUME_URL, status=200, payload=response_printer_volume)
-            mocked.get("http://" + FAKE_TEST_IP + EVENTS_URL, status=200, payload=response_events)
+            mocked.get("http://" + FAKE_TEST_IP + STATUS_URL, status=200, body=response_status)
+            mocked.get("http://" + FAKE_TEST_IP + INFORMATION_URL, status=200, body=response_information)
+            mocked.get("http://" + FAKE_TEST_IP + PRINT_VOLUME_URL, status=200, body=response_printer_volume)
+            mocked.get("http://" + FAKE_TEST_IP + EVENTS_URL, status=200, body=response_events)
 
             printer_parser = DellPrinterParser(session, FAKE_TEST_IP)
             await printer_parser.load_data()
